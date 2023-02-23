@@ -120,15 +120,28 @@ class FavoritesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
 
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text('You have ${appState.favorites.length} favorites:'),
-        ),
-        for (var word in appState.favorites)
-          FavoriteListCard(word: word, appState: appState),
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Text('You have ${appState.favorites.length} favorites:'),
+          ),
+          Expanded(
+            child: GridView(
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 400,
+                childAspectRatio: 400 / 80,
+              ),
+              children: [
+                for (var word in appState.favorites)
+                  FavoriteListCard(word: word, appState: appState),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -146,18 +159,18 @@ class FavoriteListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    var style = theme.textTheme.bodyLarge!
-        .copyWith(color: theme.colorScheme.onPrimary, letterSpacing: 5);
 
-    return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 4),
-      child: Card(
-        color: theme.colorScheme.secondary,
-        child: ListTile(
-          title: Text(word.asLowerCase,
-              style: style, semanticsLabel: word.asPascalCase),
-          leading: Icon(Icons.favorite),
-          // onTap: () => appState.tryRemove(word),
+    return Card(
+      color: theme.colorScheme.secondaryContainer,
+      child: ListTile(
+        title: Text(word.asLowerCase, semanticsLabel: word.asPascalCase),
+        leading: IconButton(
+          icon: Icon(
+            Icons.delete_outline,
+            semanticLabel: 'Delete',
+          ),
+          color: theme.colorScheme.primary,
+          onPressed: () => appState.tryRemove(word),
         ),
       ),
     );
