@@ -228,10 +228,13 @@ class BigCard extends StatelessWidget {
       elevation: 3,
       child: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Text(
-          pair.asLowerCase,
-          style: style,
-          semanticsLabel: pair.asPascalCase,
+        child: AnimatedSize(
+          duration: Duration(milliseconds: 200),
+          child: Text(
+            pair.asLowerCase,
+            style: style,
+            semanticsLabel: pair.asPascalCase,
+          ),
         ),
       ),
     );
