@@ -44,6 +44,11 @@ class MyAppState extends ChangeNotifier {
     print("favorites: $favorites");
     notifyListeners();
   }
+
+  void tryRemove(WordPair word) {
+    favorites.remove(word);
+    notifyListeners();
+  }
 }
 
 class MyHomePage extends StatefulWidget {
@@ -62,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
         page = GeneratorPage();
         break;
       case 1:
-        page = Placeholder();
+        page = FavoritesPage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
@@ -103,6 +108,59 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       );
     });
+  }
+}
+
+class FavoritesPage extends StatelessWidget {
+  const FavoritesPage({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+
+    return ListView(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text('You have ${appState.favorites.length} favorites:'),
+        ),
+        for (var word in appState.favorites)
+          FavoriteListCard(word: word, appState: appState),
+      ],
+    );
+  }
+}
+
+class FavoriteListCard extends StatelessWidget {
+  const FavoriteListCard({
+    super.key,
+    required this.word,
+    required this.appState,
+  });
+
+  final WordPair word;
+  final MyAppState appState;
+
+  @override
+  Widget build(BuildContext context) {
+    var theme = Theme.of(context);
+    var style = theme.textTheme.bodyLarge!
+        .copyWith(color: theme.colorScheme.onPrimary, letterSpacing: 5);
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 4),
+      child: Card(
+        color: theme.colorScheme.secondary,
+        child: ListTile(
+          title: Text(word.asLowerCase,
+              style: style, semanticsLabel: word.asPascalCase),
+          leading: Icon(Icons.favorite),
+          // onTap: () => appState.tryRemove(word),
+        ),
+      ),
+    );
   }
 }
 
